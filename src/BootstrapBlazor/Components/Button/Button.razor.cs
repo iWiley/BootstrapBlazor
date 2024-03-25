@@ -16,6 +16,8 @@ public partial class Button : ButtonBase
     /// </summary>
     [Parameter]
     public bool IsAutoFocus { get; set; }
+    [Parameter]
+    public bool IsHideContextInAsyncLoading { get; set; }
 
     /// <summary>
     /// 按钮点击回调方法，内置支持 IsAsync 开关
@@ -67,6 +69,7 @@ public partial class Button : ButtonBase
                 IsAsyncLoading = true;
                 ButtonIcon = LoadingIcon;
                 IsDisabled = true;
+                StateHasChanged();
             }
 
             if (IsAsync)

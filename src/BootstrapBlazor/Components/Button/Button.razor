@@ -6,11 +6,14 @@
     {
         <i class="@ButtonIcon"></i>
     }
-    @if (!string.IsNullOrEmpty(Text))
+    @if (!(IsHideContextInAsyncLoading & IsAsyncLoading))
     {
-        <span>@Text</span>
+        if (!string.IsNullOrEmpty(Text))
+        {
+            <span>@Text</span>
+        }
+        <CascadingValue Value="this" IsFixed="true">
+            @ChildContent
+        </CascadingValue>
     }
-    <CascadingValue Value="this" IsFixed="true">
-        @ChildContent
-    </CascadingValue>
 </button>

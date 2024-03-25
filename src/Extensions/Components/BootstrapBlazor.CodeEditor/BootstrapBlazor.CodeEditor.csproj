@@ -7,10 +7,11 @@
   <PropertyGroup>
     <PackageTags>Bootstrap Blazor WebAssembly wasm UI Components</PackageTags>
     <Description>Bootstrap UI components extensions of monaco-editor</Description>
+    <TargetFrameworks>net8.0</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BootstrapBlazor" Version="8.0.0" />
+    <ProjectReference Include="..\..\..\BootstrapBlazor\BootstrapBlazor.csproj" />
   </ItemGroup>
 
   <ItemGroup>

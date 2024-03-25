@@ -154,7 +154,8 @@ public abstract class ButtonBase : TooltipWrapperBase
     /// <summary>
     /// 获得/设置 是否当前正在异步执行操作
     /// </summary>
-    protected bool IsAsyncLoading { get; set; }
+    [Parameter]
+    public bool IsAsyncLoading { get; set; }
 
     private string? _lastTooltipText;
 

@@ -67,7 +67,7 @@ public class JSModule(IJSObjectReference? jSObjectReference) : IAsyncDisposable
             {
 #if DEBUG
                 System.Console.WriteLine($"identifier: {identifier} args: {string.Join(" ", args!)}");
-                throw;
+                //throw;
 #endif
             }
             catch (JSDisconnectedException) { }
@@ -76,7 +76,7 @@ public class JSModule(IJSObjectReference? jSObjectReference) : IAsyncDisposable
             {
 #if DEBUG
                 System.Console.WriteLine($"identifier: {identifier} args: {string.Join(" ", args!)}");
-                throw;
+                //throw;
 #endif
             }
         }
