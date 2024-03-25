@@ -9,7 +9,7 @@
             @HeaderTemplate
         </div>
     }
-    <div class="@BodyClassString">
+    <div @ref="BodyDiv" class="@BodyClassString">
         @if (BodyTemplate != null)
         {
             if (GroupName == null)

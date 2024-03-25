@@ -112,6 +112,9 @@ public partial class ListView<TItem> : BootstrapComponentBase
     [Parameter]
     public int PageItems { get; set; } = 20;
 
+    [NotNull]
+    public ElementReference? BodyDiv { get; set; }
+
     /// <summary>
     /// 获得/设置 当前页码
     /// </summary>

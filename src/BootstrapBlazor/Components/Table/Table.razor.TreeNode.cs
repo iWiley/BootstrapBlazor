@@ -122,4 +122,9 @@ public partial class Table<TItem>
         }
         return await OnTreeExpand(node.Value);
     }
+
+    /// <summary>
+    /// 刷新表格
+    /// </summary>
+    public void RefreshUI() => StateHasChanged();
 }
