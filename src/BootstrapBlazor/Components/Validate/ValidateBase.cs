@@ -213,6 +213,9 @@ public abstract class ValidateBase<TValue> : DisplayBase<TValue>, IValidateCompo
         ?.Model.GetType().GetPropertyByName(FieldIdentifier.Value.FieldName)!.GetCustomAttribute<RequiredAttribute>(true) != null
         || (ValidateRules?.OfType<FormItemValidator>().Select(i => i.Validator).OfType<RequiredAttribute>().Any() ?? false);
 
+    [Parameter]
+    public bool IsShowRequired { get; set; }
+
     /// <summary>
     /// Gets a string that indicates the status of the field being edited. This will include
     /// some combination of "modified", "valid", or "invalid", depending on the status of the field.
@@ -276,7 +279,7 @@ public abstract class ValidateBase<TValue> : DisplayBase<TValue>, IValidateCompo
     {
         base.OnParametersSet();
 
-        Required = (IsNeedValidate && !string.IsNullOrEmpty(DisplayText) && (ValidateForm?.ShowRequiredMark ?? false) && IsRequired()) ? "true" : null;
+        Required = (IsShowRequired || (IsNeedValidate && !string.IsNullOrEmpty(DisplayText) && (ValidateForm?.ShowRequiredMark ?? false) && IsRequired())) ? "true" : null;
     }
 
     /// <summary>

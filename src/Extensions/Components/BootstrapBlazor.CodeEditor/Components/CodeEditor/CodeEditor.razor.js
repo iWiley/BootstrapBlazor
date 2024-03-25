@@ -34,6 +34,10 @@ export async function init(id, interop, options) {
             readOnly: options.readOnly,
         });
 
+        if (editor && "function" == typeof define && define.amd) {
+            delete define.amd;
+        }
+
         // Catch when the editor lost the focus (didType to immediate)
         editor.editor.onDidBlurEditorText((e) => {
             var code = editor.editor.getValue();

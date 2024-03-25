@@ -98,6 +98,7 @@ public partial class CodeEditor
             LineNumbers = ShowLineNo,
             ReadOnly = IsReadonly,
         };
+        await Task.Delay(200);
         await InvokeVoidAsync("init", Id, Interop, options);
     }
 
@@ -130,5 +131,11 @@ public partial class CodeEditor
         {
             await OnValueChanged(Value);
         }
+    }
+
+    public void SetValue(string value)
+    {
+        Value = value;
+        _ = InvokeVoidAsync("monacoSetOptions", Id, new { Value, Theme, Language });
     }
 }
