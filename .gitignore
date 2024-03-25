@@ -377,3 +377,15 @@ src/**/wwwroot/**/uploader
 **/BootstrapBlazor/wwwroot/scss/theme/*.css
 **/BootstrapBlazor/wwwroot/scss/theme/*.css.map
 **/BootstrapBlazor/wwwroot/css/*.css
+/.gitee
+/scripts
+/src
+/test
+/CONTRIBUTING.md
+/Directory.Build.props
+/exclusion.dic
+/Framework.props
+/LICENSE
+/NuGet.Config
+/README.zh-CN.md
+/SECURITY.md
