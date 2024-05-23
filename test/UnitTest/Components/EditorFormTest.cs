@@ -211,38 +211,6 @@ public class EditorFormTest : BootstrapBlazorTestBase
     }
 
     [Fact]
-    public void IsEditable_Ok()
-    {
-        var editorItem = new EditorItem<Foo, string>();
-        editorItem.SetParametersAsync(ParameterView.FromDictionary(new Dictionary<string, object?>
-        {
-            ["Editable"] = true,
-            ["Readonly"] = false,
-            ["Visible"] = true,
-            ["IsReadonlyWhenAdd"] = true,
-            ["IsReadonlyWhenEdit"] = false
-        }));
-        Assert.False(editorItem.IsEditable(ItemChangedType.Add));
-        Assert.True(editorItem.IsEditable(ItemChangedType.Update));
-    }
-
-
-    [Fact]
-    public void IsVisible_Ok()
-    {
-        var editorItem = new EditorItem<Foo, string>();
-        editorItem.SetParametersAsync(ParameterView.FromDictionary(new Dictionary<string, object?>
-        {
-            ["Editable"] = true,
-            ["Readonly"] = false,
-            ["IsVisibleWhenAdd"] = true,
-            ["IsVisibleWhenEdit"] = false
-        }));
-        Assert.True(editorItem.IsVisible(ItemChangedType.Add));
-        Assert.False(editorItem.IsVisible(ItemChangedType.Update));
-    }
-
-    [Fact]
     public void EditorItem_Ok()
     {
         var foo = new Foo();
@@ -355,6 +323,50 @@ public class EditorFormTest : BootstrapBlazorTestBase
         });
         var display = cut.FindComponent<Display<string>>();
         Assert.Equal(showTooltip, display.Instance.ShowLabelTooltip);
+    }
+
+    [Fact]
+    public void EditorItem_Editable_Ok()
+    {
+        var foo = new Foo();
+        var cut = Context.RenderComponent<EditorForm<Foo>>(pb =>
+        {
+            pb.Add(a => a.Model, foo);
+            pb.Add(a => a.AutoGenerateAllItem, false);
+            pb.Add(a => a.FieldItems, f => builder =>
+            {
+                var index = 0;
+                builder.OpenComponent<EditorItem<Foo, string>>(index++);
+                builder.AddAttribute(index++, nameof(EditorItem<Foo, string>.Field), f.Name);
+                builder.AddAttribute(index++, nameof(EditorItem<Foo, string>.FieldExpression), Utility.GenerateValueExpression(foo, nameof(Foo.Name), typeof(string)));
+                builder.CloseComponent();
+
+                builder.OpenComponent<EditorItem<Foo, string>>(index++);
+                builder.AddAttribute(index++, nameof(EditorItem<Foo, string>.Field), f.Address);
+                builder.AddAttribute(index++, nameof(EditorItem<Foo, string>.FieldExpression), Utility.GenerateValueExpression(foo, nameof(Foo.Address), typeof(string)));
+                builder.CloseComponent();
+            });
+        });
+        cut.Contains("地址");
+
+        cut.SetParametersAndRender(pb =>
+        {
+            pb.Add(a => a.FieldItems, f => builder =>
+            {
+                var index = 0;
+                builder.OpenComponent<EditorItem<Foo, string>>(index++);
+                builder.AddAttribute(index++, nameof(EditorItem<Foo, string>.Field), f.Name);
+                builder.AddAttribute(index++, nameof(EditorItem<Foo, string>.FieldExpression), Utility.GenerateValueExpression(foo, nameof(Foo.Name), typeof(string)));
+                builder.CloseComponent();
+
+                builder.OpenComponent<EditorItem<Foo, string>>(index++);
+                builder.AddAttribute(index++, nameof(EditorItem<Foo, string>.Field), f.Address);
+                builder.AddAttribute(index++, nameof(EditorItem<Foo, string>.FieldExpression), Utility.GenerateValueExpression(foo, nameof(Foo.Address), typeof(string)));
+                builder.AddAttribute(index++, nameof(EditorItem<Foo, string>.Ignore), true);
+                builder.CloseComponent();
+            });
+        });
+        cut.DoesNotContain("地址");
     }
 
     [Fact]
@@ -488,7 +500,7 @@ public class EditorFormTest : BootstrapBlazorTestBase
         builder.OpenComponent<EditorItem<Foo, string>>(0);
         builder.AddAttribute(1, nameof(EditorItem<Foo, string>.Field), f.Address);
         builder.AddAttribute(2, nameof(EditorItem<Foo, string>.FieldExpression), Utility.GenerateValueExpression(foo, nameof(Foo.Address), typeof(string)));
-        builder.AddAttribute(3, nameof(EditorItem<Foo, string>.Editable), false);
+        builder.AddAttribute(3, nameof(EditorItem<Foo, string>.Ignore), true);
         builder.CloseComponent();
     };
 

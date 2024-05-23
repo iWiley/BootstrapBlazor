@@ -123,6 +123,11 @@ internal static class MenusLocalizerExtensions
                 {
                     Text = Localizer["JSExtension"],
                     Url = "js-extensions"
+                },
+                new()
+                {
+                    Text = Localizer["OnlineText"],
+                    Url = "online"
                 }
             };
             AddBadge(item);
@@ -541,11 +546,6 @@ internal static class MenusLocalizerExtensions
                 {
                     Text = Localizer["Carousel"],
                     Url = "carousel"
-                },
-                new()
-                {
-                    Text = Localizer["Client"],
-                    Url = "client"
                 },
                 new()
                 {
@@ -1191,11 +1191,6 @@ internal static class MenusLocalizerExtensions
                 },
                 new()
                 {
-                    Text = Localizer["FullScreen"],
-                    Url = "fullscreen"
-                },
-                new()
-                {
                     Text = Localizer["GoTop"],
                     Url = "go-top"
                 },
@@ -1318,6 +1313,16 @@ internal static class MenusLocalizerExtensions
                 },
                 new()
                 {
+                    Text = Localizer["Client"],
+                    Url = "client"
+                },
+                new()
+                {
+                    Text = Localizer["ConnectionService"],
+                    Url = "connection-service"
+                },
+                new()
+                {
                     Text = Localizer["Dispatch"],
                     Url = "dispatch"
                 },
@@ -1330,6 +1335,11 @@ internal static class MenusLocalizerExtensions
                 {
                     Text = Localizer["DialogService"],
                     Url = "dialog-service"
+                },
+                new()
+                {
+                    Text = Localizer["FullScreen"],
+                    Url = "fullscreen"
                 },
                 new()
                 {
@@ -1368,8 +1378,8 @@ internal static class MenusLocalizerExtensions
                 },
                 new()
                 {
-                    Text = Localizer["Print"],
-                    Url = "print"
+                    Text = Localizer["PrintService"],
+                    Url = "print-service"
                 },
                 new()
                 {

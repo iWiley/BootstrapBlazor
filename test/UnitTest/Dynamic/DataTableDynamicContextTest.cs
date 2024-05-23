@@ -58,6 +58,15 @@ public class DataTableDynamicContextTest : BootstrapBlazorTestBase
     }
 
     [Fact]
+    public void Ignore_Ok()
+    {
+        var localizer = Context.Services.GetRequiredService<IStringLocalizer<Foo>>();
+        var fooData = GenerateDataTable(localizer);
+        var context = new DataTableDynamicContext(fooData, IgnoreCallback(localizer));
+        Assert.Equal(4, context.GetColumns().Count());
+    }
+
+    [Fact]
     public void RowStatus_Ok()
     {
         var localizer = Context.Services.GetRequiredService<IStringLocalizer<Foo>>();
@@ -265,6 +274,33 @@ public class DataTableDynamicContextTest : BootstrapBlazorTestBase
             {
                 new(nameof(DisplayAttribute.Name), localizer[nameof(Foo.DateTime)].Value)
             });
+        }
+        else if (propertyName == nameof(Foo.Name))
+        {
+            context.AddRequiredAttribute(nameof(Foo.Name), localizer["Name.Required"].Value);
+            context.AddDisplayNameAttribute(nameof(Foo.Name), "Test-Name");
+            context.AddDescriptionAttribute(nameof(Foo.Name), "Test-Name-Desc");
+            // 使用 Text 设置显示名称示例
+            col.Text = localizer[nameof(Foo.Name)];
+        }
+    });
+
+    private static Action<DataTableDynamicContext, ITableColumn> IgnoreCallback(IStringLocalizer<Foo> localizer) => new((context, col) =>
+    {
+        var propertyName = col.GetFieldName();
+        if (propertyName == nameof(Foo.DateTime))
+        {
+            context.AddRequiredAttribute(nameof(Foo.DateTime));
+            // 使用 AutoGenerateColumnAttribute 设置显示名称示例
+            context.AddAutoGenerateColumnAttribute(nameof(Foo.DateTime), new KeyValuePair<string, object?>[]
+            {
+                new(nameof(AutoGenerateColumnAttribute.Text), localizer[nameof(Foo.DateTime)].Value)
+            });
+            context.AddDisplayAttribute(nameof(Foo.DateTime), new KeyValuePair<string, object?>[]
+            {
+                new(nameof(DisplayAttribute.Name), localizer[nameof(Foo.DateTime)].Value)
+            });
+            col.Ignore = true;
         }
         else if (propertyName == nameof(Foo.Name))
         {

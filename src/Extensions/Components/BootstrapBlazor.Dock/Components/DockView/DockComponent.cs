@@ -13,7 +13,7 @@ namespace BootstrapBlazor.Components;
 public class DockComponent : DockComponentBase
 {
     /// <summary>
-    /// 获得/设置 组件名称 默认 component
+    /// 获得/设置 组件名称 默认 component golden-layout 渲染使用
     /// </summary>
     [Parameter]
     public string ComponentName { get; set; } = "component";

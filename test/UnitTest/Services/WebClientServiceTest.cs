@@ -3,6 +3,7 @@
 // Website: https://www.blazor.zone or https://argozhang.github.io/
 
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace UnitTest.Services;
 
@@ -15,6 +16,7 @@ public class WebClientServiceTest : BootstrapBlazorTestBase
         {
             Id = "test_id",
             Ip = "192.168.0.1",
+            City = "保留",
             OS = "ios",
             Browser = "chrome",
             Device = WebClientDeviceType.Mobile,
@@ -75,7 +77,6 @@ public class WebClientServiceTest : BootstrapBlazorTestBase
     [Fact]
     public async Task WebClientService_Dispose()
     {
-        var service = Context.Services.GetRequiredService<WebClientService>() as IAsyncDisposable;
-        await service.DisposeAsync();
+        await (Context.Services.GetRequiredService<WebClientService>() as IAsyncDisposable).DisposeAsync();
     }
 }

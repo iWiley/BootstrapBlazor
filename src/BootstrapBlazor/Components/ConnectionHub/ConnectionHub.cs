@@ -49,7 +49,8 @@ public class ConnectionHub : BootstrapModuleComponentBase
                 Invoke = Interop,
                 Method = nameof(Callback),
                 ConnectionId = Guid.NewGuid(),
-                Interval = options.BeatInterval.TotalMilliseconds, Url = "ip.axd"
+                Interval = options.BeatInterval.TotalMilliseconds,
+                Url = "ip.axd"
             });
         }
     }
@@ -70,9 +71,9 @@ public class ConnectionHub : BootstrapModuleComponentBase
             {
                 client.RequestUrl = NavigationManager.Uri;
 
-                if (!string.IsNullOrEmpty(client.Ip))
+                if (BootstrapBlazorOptions.Value.ConnectionHubOptions.EnableIpLocator)
                 {
-                    _ipLocatorProvider ??= IpLocatorFactory.Create();
+                    _ipLocatorProvider ??= IpLocatorFactory.Create(BootstrapBlazorOptions.Value.IpLocatorOptions.ProviderName);
                     client.City = await _ipLocatorProvider.Locate(client.Ip);
                 }
                 ConnectionService.AddOrUpdate(client);

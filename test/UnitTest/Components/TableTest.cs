@@ -1044,7 +1044,7 @@ public class TableTest : TableTestBase
                 pb.Add(a => a.OnQueryAsync, option =>
                 {
                     isQuery = true;
-                    isFirstQuery = option.IsFristQuery;
+                    isFirstQuery = option.IsFirstQuery;
                     return Task.FromResult(new QueryData<Foo>()
                     {
                         Items = Array.Empty<Foo>(),
@@ -1090,7 +1090,7 @@ public class TableTest : TableTestBase
                 pb.Add(a => a.IsPagination, true);
                 pb.Add(a => a.OnQueryAsync, option =>
                 {
-                    isFirstQuery = option.IsFristQuery;
+                    isFirstQuery = option.IsFirstQuery;
                     return Task.FromResult(new QueryData<Foo>()
                     {
                         Items = Array.Empty<Foo>(),
@@ -2724,6 +2724,8 @@ public class TableTest : TableTestBase
     {
         var localizer = Context.Services.GetRequiredService<IStringLocalizer<Foo>>();
         var items = Foo.GenerateFoo(localizer, 4);
+        Foo? currentDetailRow = null;
+        var toggleDetailRow = false;
         var cut = Context.RenderComponent<BootstrapBlazorRoot>(pb =>
         {
             pb.AddChildContent<Table<Foo>>(pb =>
@@ -2742,6 +2744,12 @@ public class TableTest : TableTestBase
                 pb.Add(a => a.DetailRowTemplate, foo => builder =>
                 {
                     builder.AddContent(1, new MarkupString($"<div class=\"detail-row-test\">{foo.Address}</div>"));
+                });
+                pb.Add(a => a.OnToggleDetailRowCallback, (foo, toggle) =>
+                {
+                    currentDetailRow = foo;
+                    toggleDetailRow = toggle;
+                    return Task.CompletedTask;
                 });
             });
         });
@@ -2767,12 +2775,12 @@ public class TableTest : TableTestBase
         {
             pb.Add(a => a.IsAccordion, true);
         });
-        await cut.InvokeAsync(() =>
+        await cut.InvokeAsync(async () =>
         {
-            table.Instance.ExpandDetailRow(items[0]);
-            table.Instance.ExpandDetailRow(items[1]);
-            table.Instance.ExpandDetailRow(items[2]);
-            table.Instance.ExpandDetailRow(items[3]);
+            await table.Instance.ExpandDetailRow(items[0]);
+            await table.Instance.ExpandDetailRow(items[1]);
+            await table.Instance.ExpandDetailRow(items[2]);
+            await table.Instance.ExpandDetailRow(items[3]);
         });
         table.SetParametersAndRender();
         rows = cut.FindAll(".detail-row-test");
@@ -2780,6 +2788,10 @@ public class TableTest : TableTestBase
 
         rows = cut.FindAll(".is-detail.show");
         Assert.Single(rows);
+
+        Assert.NotNull(currentDetailRow);
+        Assert.Equal(4, currentDetailRow.Id);
+        Assert.True(toggleDetailRow);
     }
 
     [Theory]
@@ -4431,13 +4443,15 @@ public class TableTest : TableTestBase
                 pb.Add(a => a.AutoGenerateColumns, true);
                 pb.Add(a => a.ColumnOrderCallback, cols =>
                 {
-                    return cols.OrderByDescending(i => i.Order);
+                    cols.ElementAt(0).Order = 100;
+                    cols.ElementAt(1).Order = -3;
+                    return cols;
                 });
             });
         });
         var table = cut.FindComponent<Table<Foo>>();
         var seqs = table.Instance.Columns.Select(i => i.Order);
-        Assert.Equal(new List<int>() { 70, 60, 50, 40, 20, 10, 1 }, seqs);
+        Assert.Equal(new List<int>() { 20, 40, 50, 60, 70, 100, -3 }, seqs);
     }
 
     [Fact]
@@ -4609,20 +4623,45 @@ public class TableTest : TableTestBase
         {
             pb.AddChildContent<Table<Foo>>(pb =>
             {
-                pb.Add(a => a.RenderMode, TableRenderMode.Table);
                 pb.Add(a => a.Items, items);
+                pb.Add(a => a.RenderMode, TableRenderMode.Table);
                 pb.Add(a => a.TableColumns, foo => builder =>
                 {
                     builder.OpenComponent<TableColumn<Foo, string>>(0);
                     builder.AddAttribute(1, "Field", "Name");
                     builder.AddAttribute(2, "FieldExpression", Utility.GenerateValueExpression(foo, "Name", typeof(string)));
-                    builder.AddAttribute(3, "Editable", true);
+                    builder.CloseComponent();
+
+                    builder.OpenComponent<TableColumn<Foo, string>>(0);
+                    builder.AddAttribute(1, "Field", "Address");
+                    builder.AddAttribute(2, "FieldExpression", Utility.GenerateValueExpression(foo, "Address", typeof(string)));
                     builder.CloseComponent();
                 });
             });
         });
-        var column = cut.FindComponent<TableColumn<Foo, string>>();
-        Assert.True(column.Instance.Editable);
+        var table = cut.FindComponent<Table<Foo>>();
+        Assert.Equal(2, table.Instance.Columns.Count);
+        Assert.Equal(2, table.Instance.GetVisibleColumns().Count());
+
+        table.SetParametersAndRender(pb =>
+        {
+            pb.Add(a => a.TableColumns, foo => builder =>
+            {
+                builder.OpenComponent<TableColumn<Foo, string>>(0);
+                builder.AddAttribute(1, "Field", "Name");
+                builder.AddAttribute(2, "FieldExpression", Utility.GenerateValueExpression(foo, "Name", typeof(string)));
+                builder.CloseComponent();
+
+                builder.OpenComponent<TableColumn<Foo, string>>(0);
+                builder.AddAttribute(1, "Field", "Address");
+                builder.AddAttribute(2, "FieldExpression", Utility.GenerateValueExpression(foo, "Address", typeof(string)));
+                builder.AddAttribute(3, "Ignore", true);
+                builder.CloseComponent();
+            });
+        });
+        table = cut.FindComponent<Table<Foo>>();
+        Assert.Equal(2, table.Instance.Columns.Count);
+        Assert.Single(table.Instance.GetVisibleColumns());
     }
 
     [Theory]
@@ -4865,6 +4904,47 @@ public class TableTest : TableTestBase
 
         css = table.Instance.TestGetHeaderWrapperClassString(new InternalTableColumn("Name", typeof(string)) { Align = Alignment.Center });
         Assert.Equal("table-cell center", css);
+    }
+
+    [Fact]
+    public void TableColumn_Ignore()
+    {
+        var items = new List<MockComplexFoo>([
+            new() { Name = "Test1", Foo = new() { Id = 1, Name = "Test_1" } },
+            new() { Name = "Test2", Foo = new() { Id = 2, Name = "Test_2" } },
+            new() { Name = "Test3", Foo = new() { Id = 3, Name = "Test_3" } },
+        ]);
+        var cut = Context.RenderComponent<BootstrapBlazorRoot>(pb =>
+        {
+            pb.AddChildContent<Table<MockComplexFoo>>(pb =>
+            {
+                pb.Add(a => a.Items, items);
+                pb.Add(a => a.AutoGenerateColumns, true);
+                pb.Add(a => a.RenderMode, TableRenderMode.Table);
+
+                pb.Add(a => a.TableColumns, foo => builder =>
+                {
+                    builder.OpenComponent<TableColumn<MockComplexFoo, int>>(0);
+                    builder.AddAttribute(1, "Field", 0);
+                    builder.AddAttribute(2, "FieldExpression", Utility.GenerateValueExpression(foo, "Foo.Id", typeof(int)));
+                    builder.CloseComponent();
+
+                    builder.OpenComponent<TableColumn<MockComplexFoo, string>>(0);
+                    builder.AddAttribute(1, "Field", "Test");
+                    builder.AddAttribute(2, "FieldExpression", Utility.GenerateValueExpression(foo, "Foo.Name", typeof(string)));
+                    builder.CloseComponent();
+
+                    builder.OpenComponent<TableColumn<MockComplexFoo, string>>(0);
+                    builder.AddAttribute(1, "Field", "Test");
+                    builder.AddAttribute(2, "FieldExpression", Utility.GenerateValueExpression(foo, "Foo.Address", typeof(string)));
+                    builder.CloseComponent();
+                });
+            });
+        });
+
+        // 自动生成 2 列 手动 Id 列忽略 Name, Address 列追加
+        var table = cut.FindComponent<Table<MockComplexFoo>>();
+        Assert.Equal(4, table.Instance.Columns.Count);
     }
 
     [Fact]
@@ -5361,15 +5441,15 @@ public class TableTest : TableTestBase
     [InlineData(false)]
     public void ReloadColumnWidth_Ok(bool fixedHeader)
     {
-        Context.JSInterop.Setup<string>("reloadColumnWidth", "test_table_id", "test_client_name").SetResult("""
-            {
-                "cols": [
-                    { "name": "Name", "width": 20 },
-                    { "name": "Address", "width": 80 }
-                ],
-                "table": 100
-            }
-            """);
+        Context.JSInterop.Setup<string>("reloadColumnWidth", "test_client_name").SetResult("""
+        {
+            "cols": [
+                { "name": "Name", "width": 20 },
+                { "name": "Address", "width": 80 }
+            ],
+            "table": 100
+        }
+        """);
         var localizer = Context.Services.GetRequiredService<IStringLocalizer<Foo>>();
         var items = Foo.GenerateFoo(localizer, 2);
         var cut = Context.RenderComponent<BootstrapBlazorRoot>(pb =>
@@ -5379,7 +5459,6 @@ public class TableTest : TableTestBase
                 pb.Add(a => a.IsFixedHeader, fixedHeader);
                 pb.Add(a => a.RenderMode, TableRenderMode.Table);
                 pb.Add(a => a.ClientTableName, "test_client_name");
-                pb.Add(a => a.Id, "test_table_id");
                 pb.Add(a => a.AllowResizing, true);
                 pb.Add(a => a.Items, items);
                 pb.Add(a => a.TableColumns, foo => builder =>
@@ -5403,7 +5482,7 @@ public class TableTest : TableTestBase
     [Fact]
     public void ReloadColumnWidth_TableWidth_Invalid()
     {
-        Context.JSInterop.Setup<string>("reloadColumnWidth", "test_table_id", "test_client_name").SetResult("""
+        Context.JSInterop.Setup<string>("reloadColumnWidth", "test_client_name").SetResult("""
             {
                 "cols": [
                     { "name": "Name", "width": 20 },
@@ -5420,7 +5499,6 @@ public class TableTest : TableTestBase
             {
                 pb.Add(a => a.RenderMode, TableRenderMode.Table);
                 pb.Add(a => a.ClientTableName, "test_client_name");
-                pb.Add(a => a.Id, "test_table_id");
                 pb.Add(a => a.AllowResizing, true);
                 pb.Add(a => a.Items, items);
                 pb.Add(a => a.TableColumns, foo => builder =>
@@ -5444,7 +5522,7 @@ public class TableTest : TableTestBase
     [Fact]
     public void ReloadColumnWidth_NoTableElement()
     {
-        Context.JSInterop.Setup<string>("reloadColumnWidth", "test_table_id", "test_client_name").SetResult("""
+        Context.JSInterop.Setup<string>("reloadColumnWidth", "test_client_name").SetResult("""
             {
                 "cols": [
                     { "name": "Name", "width": 20 },
@@ -5460,7 +5538,6 @@ public class TableTest : TableTestBase
             {
                 pb.Add(a => a.RenderMode, TableRenderMode.Table);
                 pb.Add(a => a.ClientTableName, "test_client_name");
-                pb.Add(a => a.Id, "test_table_id");
                 pb.Add(a => a.AllowResizing, true);
                 pb.Add(a => a.Items, items);
                 pb.Add(a => a.TableColumns, foo => builder =>
@@ -5484,7 +5561,7 @@ public class TableTest : TableTestBase
     [Fact]
     public void ReloadColumnWidth_Columns_Invalid()
     {
-        Context.JSInterop.Setup<string>("reloadColumnWidth", "test_table_id", "test_client_name").SetResult("""
+        Context.JSInterop.Setup<string>("reloadColumnWidth", "test_client_name").SetResult("""
             {
                 "cols": {
                     "name": "Name",
@@ -5500,7 +5577,6 @@ public class TableTest : TableTestBase
             {
                 pb.Add(a => a.RenderMode, TableRenderMode.Table);
                 pb.Add(a => a.ClientTableName, "test_client_name");
-                pb.Add(a => a.Id, "test_table_id");
                 pb.Add(a => a.AllowResizing, true);
                 pb.Add(a => a.Items, items);
                 pb.Add(a => a.TableColumns, foo => builder =>
@@ -6491,6 +6567,7 @@ public class TableTest : TableTestBase
                 pb.Add(a => a.IsExcel, true);
             });
         });
+
         cut.Contains("table table-excel");
 
         // trigger value changed
@@ -7172,34 +7249,17 @@ public class TableTest : TableTestBase
 
         })));
         Assert.Equal("<div class=\"form-control is-display\"></div>", cut1.Markup);
-    }
 
-    [Fact]
-    public void RenderCell_Editable_False()
-    {
-        var cut = Context.RenderComponent<BootstrapBlazorRoot>(pb =>
+        var col = cut.FindComponent<TableColumn<ReadonlyFoo, string>>();
+        col.SetParametersAndRender(pb =>
         {
-            pb.AddChildContent<MockTable>(pb =>
-            {
-                pb.Add(a => a.Items, new List<Foo> { new ReadonlyFoo() });
-                pb.Add(a => a.TableColumns, foo => builder =>
-                {
-                    builder.OpenComponent<TableColumn<Foo, string>>(0);
-                    builder.AddAttribute(1, "Field", "ReadonlyValue");
-                    builder.AddAttribute(2, "FieldExpression", Utility.GenerateValueExpression(foo, "Name", typeof(string)));
-                    builder.AddAttribute(3, "Editable", false);
-                    builder.AddAttribute(4, "Template", new RenderFragment<TableColumnContext<Foo, string>>(context => builder => builder.AddContent(0, "test-EditTemplate")));
-                    builder.CloseComponent();
-                });
-            });
+            pb.Add(a => a.Template, foo => builder => builder.AddContent(0, "test-Template"));
         });
-
-        var table = cut.FindComponent<MockTable>();
-        var foo = new Foo();
-        var cut1 = Context.Render(builder => builder.AddContent(0, table.Instance.TestRenderCell(foo, ItemChangedType.Add, col =>
+        cut1 = Context.Render(builder => builder.AddContent(0, table.Instance.TestRenderCell(foo, ItemChangedType.Add, col =>
         {
+
         })));
-        Assert.Equal("test-EditTemplate", cut1.Markup);
+        Assert.Equal("test-Template", cut1.Markup);
     }
 
     [Fact]
@@ -7519,8 +7579,11 @@ public class TableTest : TableTestBase
     }
 
     [Fact]
-    public void AllowDragColumn_Ok()
+    public async Task AllowDragColumn_Ok()
     {
+        Context.JSInterop.Setup<List<string>>("reloadColumnOrder", "table-unit-test").SetResult(["Name", "Address"]);
+        Context.JSInterop.SetupVoid("saveColumnOrder").SetVoidResult();
+
         var name = "";
         var localizer = Context.Services.GetRequiredService<IStringLocalizer<Foo>>();
         var cut = Context.RenderComponent<BootstrapBlazorRoot>(pb =>
@@ -7529,6 +7592,7 @@ public class TableTest : TableTestBase
             {
                 pb.Add(a => a.RenderMode, TableRenderMode.Table);
                 pb.Add(a => a.AllowDragColumn, true);
+                pb.Add(a => a.ClientTableName, "table-unit-test");
                 pb.Add(a => a.OnQueryAsync, OnQueryAsync(localizer));
                 pb.Add(a => a.OnDragColumnEndAsync, (fieldName, columns) =>
                 {
@@ -7551,13 +7615,13 @@ public class TableTest : TableTestBase
         });
 
         var table = cut.FindComponent<Table<Foo>>();
-        cut.InvokeAsync(async () =>
+        await cut.InvokeAsync(async () =>
         {
             await table.Instance.DragColumnCallback(1, 0);
             Assert.Equal("Address", name);
         });
 
-        cut.InvokeAsync(async () =>
+        await cut.InvokeAsync(async () =>
         {
             var columns = cut.FindAll("th");
             Assert.Contains("地址", columns[0].InnerHtml);

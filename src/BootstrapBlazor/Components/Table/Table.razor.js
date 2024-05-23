@@ -1,9 +1,9 @@
-﻿export { getResponsive } from '../../modules/responsive.js?v=$version'
-import { copy, drag, getDescribedElement, getOuterHeight, getWidth, isVisible } from '../../modules/utility.js?v=$version'
-import '../../modules/browser.js?v=$version'
-import Data from '../../modules/data.js?v=$version'
-import EventHandler from '../../modules/event-handler.js?v=$version'
-import Popover from "../../modules/base-popover.js?v=$version"
+﻿export { getResponsive } from '../../modules/responsive.js'
+import { copy, drag, getDescribedElement, getOuterHeight, getWidth, isVisible } from '../../modules/utility.js'
+import '../../modules/browser.js'
+import Data from '../../modules/data.js'
+import EventHandler from '../../modules/event-handler.js'
+import Popover from "../../modules/base-popover.js"
 
 const setBodyHeight = table => {
     const el = table.el
@@ -468,7 +468,7 @@ export function init(id, invoke, callbacks) {
     reset(id)
 }
 
-export function reloadColumnWidth(id, tableName) {
+export function reloadColumnWidth(tableName) {
     const key = `bb-table-column-width-${tableName}`
     return localStorage.getItem(key);
 }
@@ -484,6 +484,16 @@ const saveColumnWidth = table => {
         }),
         "table": tableWidth
     }));
+}
+
+export function reloadColumnOrder(tableName) {
+    const key = `bb-table-column-order-${tableName}`
+    return JSON.parse(localStorage.getItem(key)) || [];
+}
+
+export function saveColumnOrder(options) {
+    const key = `bb-table-column-order-${options.tableName}`
+    localStorage.setItem(key, JSON.stringify(options.columns));
 }
 
 export function reset(id) {

@@ -13,9 +13,6 @@ namespace BootstrapBlazor.Localization.Json;
 /// <summary>
 /// JsonStringLocalizer 实现类
 /// </summary>
-/// <remarks>
-/// 构造函数
-/// </remarks>
 /// <param name="assembly"></param>
 /// <param name="typeName"></param>
 /// <param name="baseName"></param>
@@ -102,7 +99,7 @@ internal class JsonStringLocalizer(Assembly assembly, string typeName, string ba
     {
         string? ret = null;
         var cultureName = CultureInfo.CurrentUICulture.Name;
-        var cacheKey = $"{nameof(GetValueFromCache)}&name={name}&{Assembly.GetName().Name}&type={typeName}&culture={cultureName}";
+        var cacheKey = $"{nameof(GetValueFromCache)}&name={name}&{Assembly.GetUniqueName()}&type={typeName}&culture={cultureName}";
         if (!CacheManager.GetMissingLocalizerByKey(cacheKey))
         {
             var l = GetLocalizedString();
@@ -133,7 +130,7 @@ internal class JsonStringLocalizer(Assembly assembly, string typeName, string ba
     {
         string? ret = null;
         var cultureName = CultureInfo.CurrentUICulture.Name;
-        var cacheKey = $"{nameof(GetLocalizerValueFromCache)}&name={name}&{Assembly.GetName().Name}&type={typeName}&culture={cultureName}";
+        var cacheKey = $"{nameof(GetLocalizerValueFromCache)}&name={name}&{Assembly.GetUniqueName()}&type={typeName}&culture={cultureName}";
         if (!CacheManager.GetMissingLocalizerByKey(cacheKey))
         {
             var l = localizer[name];

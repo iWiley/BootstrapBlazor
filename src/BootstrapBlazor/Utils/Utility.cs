@@ -297,6 +297,12 @@ public static class Utility
     /// <returns></returns>
     public static IEnumerable<ITableColumn> GetTableColumns(Type type, IEnumerable<ITableColumn>? source = null, Func<IEnumerable<ITableColumn>, IEnumerable<ITableColumn>>? defaultOrderCallback = null)
     {
+        var columns = new List<ITableColumn>();
+        if (source != null)
+        {
+            columns.AddRange(source);
+        }
+
         var cols = new List<ITableColumn>(50);
         var metadataType = TableMetadataTypeService.GetMetadataType(type);
         var classAttribute = metadataType.GetCustomAttribute<AutoGenerateClassAttribute>(true);
@@ -337,18 +343,24 @@ public static class Utility
             }
 
             // 替换属性 手写优先
-            var col = source?.FirstOrDefault(c => c.GetFieldName() == tc.GetFieldName());
+            var col = columns.Find(c => c.GetFieldName() == tc.GetFieldName());
             if (col != null)
             {
                 tc.CopyValue(col);
+                columns.Remove(col);
             }
             cols.Add(tc);
         }
 
-        return defaultOrderCallback?.Invoke(cols) ?? cols.OrderFunc();
+        if (columns.Count > 0)
+        {
+            cols.AddRange(columns);
+        }
+        return defaultOrderCallback?.Invoke(cols) ?? cols;
     }
 
-    private static IEnumerable<ITableColumn> OrderFunc(this List<ITableColumn> cols) => cols.Where(a => a.Order > 0).OrderBy(a => a.Order)
+    internal static IEnumerable<ITableColumn> OrderFunc(this IEnumerable<ITableColumn> cols) => cols
+        .Where(a => a.Order > 0).OrderBy(a => a.Order)
         .Concat(cols.Where(a => a.Order == 0))
         .Concat(cols.Where(a => a.Order < 0).OrderBy(a => a.Order));
 
@@ -386,7 +398,7 @@ public static class Utility
             builder.AddMultipleAttributes(60, item.ComponentParameters);
             builder.CloseComponent();
         }
-        else if (item.ComponentType == typeof(Textarea))
+        else if (item.ComponentType == typeof(Textarea) || item.Rows > 0)
         {
             builder.OpenComponent(0, typeof(Textarea));
             builder.AddAttribute(10, nameof(Textarea.DisplayText), displayName);
@@ -585,7 +597,7 @@ public static class Utility
     /// 通过指定类型生成组件类型
     /// </summary>
     /// <param name="fieldType"></param>
-    /// <param name="hasRows">是否为 Textarea 组件</param>
+    /// <param name="hasRows">是否为 TextArea 组件</param>
     /// <param name="lookup"></param>
     /// <returns></returns>
     private static Type GenerateComponentType(Type fieldType, bool hasRows, IEnumerable<SelectedItem>? lookup)

@@ -1,18 +1,19 @@
-﻿.code-edtior {
+﻿.code-editor {
     min-height: 500px;
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
     background: rgb(30, 30, 30);
     border-radius: 1rem;
 }
 
-    .code-edtior ::deep .spinner {
+    .code-editor ::deep .spinner {
         position: fixed
     }
 
-    .code-edtior .code-editor-body {
+    .code-editor .code-editor-body {
         min-height: 500px;
         width: 100%;
         border: calc(var(--stroke-width) * 1px) solid var(--neutral-stroke-rest);

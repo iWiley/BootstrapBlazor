@@ -422,7 +422,7 @@ public partial class Table<TItem>
         {
             var queryOption = BuildQueryPageOptions();
             // 设置是否为首次查询
-            queryOption.IsFristQuery = _firstQuery;
+            queryOption.IsFirstQuery = _firstQuery;
 
             if (OnQueryAsync == null && typeof(TItem).IsAssignableTo(typeof(IDynamicObject)))
             {
@@ -442,7 +442,6 @@ public partial class Table<TItem>
 
         async Task OnQuery(QueryPageOptions queryOption)
         {
-
             var queryData = await InternalOnQueryAsync(queryOption);
             PageIndex = queryOption.PageIndex;
             PageItems = queryOption.PageItems;

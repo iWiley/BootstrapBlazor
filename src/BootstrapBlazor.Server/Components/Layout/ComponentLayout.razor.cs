@@ -47,13 +47,6 @@ public partial class ComponentLayout : IAsyncDisposable
     /// </summary>
     private JSModule? Module { get; set; }
 
-    /// <summary>
-    /// 获得 IVersionService 服务实例
-    /// </summary>
-    [Inject]
-    [NotNull]
-    private IVersionService? JSVersionService { get; set; }
-
     [Inject]
     [NotNull]
     private IOptions<IconThemeOptions>? IconThemeOptions { get; set; }
@@ -66,7 +59,7 @@ public partial class ComponentLayout : IAsyncDisposable
     private string? IconThemeKey { get; set; }
 
     /// <summary>
-    /// OnInitialized 方法
+    /// <inheritdoc/>
     /// </summary>
     protected override void OnInitialized()
     {
@@ -75,7 +68,8 @@ public partial class ComponentLayout : IAsyncDisposable
         IconThemes.AddRange(new SelectedItem[]
         {
             new("fa", "Font Awesome"),
-            new("mdi", "Material Design")
+            new("mdi", "Material Design"),
+            new("bootstrap", "Bootstrap")
         });
         IconThemeKey = IconThemeOptions.Value.ThemeKey;
 
@@ -84,7 +78,7 @@ public partial class ComponentLayout : IAsyncDisposable
     }
 
     /// <summary>
-    /// OnParametersSet 方法
+    /// <inheritdoc/>
     /// </summary>
     protected override void OnParametersSet()
     {
@@ -109,7 +103,7 @@ public partial class ComponentLayout : IAsyncDisposable
     {
         if (firstRender)
         {
-            Module = await JSRuntime.LoadModule("./Components/Layout/ComponentLayout.razor.js", JSVersionService.GetVersion());
+            Module = await JSRuntime.LoadModule("./Components/Layout/ComponentLayout.razor.js");
         }
         if (Module != null)
         {

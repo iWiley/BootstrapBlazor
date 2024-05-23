@@ -15,6 +15,12 @@ public partial class FullScreenButton
     [Parameter]
     public string? FullScreenIcon { get; set; }
 
+    /// <summary>
+    /// 获得/设置 全屏元素 Id 默认为 null
+    /// </summary>
+    [Parameter]
+    public string? TargetId { get; set; }
+
     [Inject]
     [NotNull]
     private FullScreenService? FullScreenService { get; set; }
@@ -39,7 +45,8 @@ public partial class FullScreenButton
         base.OnParametersSet();
 
         Icon ??= IconTheme.GetIconByKey(ComponentIcons.FullScreenButtonIcon);
+        FullScreenIcon ??= IconTheme.GetIconByKey(ComponentIcons.FullScreenButtonIcon);
     }
 
-    private Task ToggleFullScreen() => FullScreenService.Toggle();
+    private Task ToggleFullScreen() => FullScreenService.Toggle(new FullScreenOption() { Id = TargetId });
 }

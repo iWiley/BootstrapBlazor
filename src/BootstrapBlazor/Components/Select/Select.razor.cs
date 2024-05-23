@@ -172,6 +172,12 @@ public partial class Select<TValue> : ISelect
     public string? DefaultVirtualizeItemText { get; set; }
 
     /// <summary>
+    /// 获得/设置 清除文本内容 OnClear 回调方法 默认 null
+    /// </summary>
+    [Parameter]
+    public Func<Task>? OnClearAsync { get; set; }
+
+    /// <summary>
     /// 获得/设置 禁止首次加载时触发 OnSelectedItemChanged 回调方法 默认 false
     /// </summary>
     [Parameter]
@@ -327,7 +333,7 @@ public partial class Select<TValue> : ISelect
 
             SelectedItem = DataSource.Find(i => i.Value.Equals(CurrentValueAsString, StringComparison))
                 ?? DataSource.Find(i => i.Active)
-                ?? DataSource.FirstOrDefault()
+                ?? DataSource.Where(i => !i.IsDisabled).FirstOrDefault()
                 ?? GetVirtualizeItem();
 
             if (SelectedItem != null && ((_init || !DisableItemChangedWhenFirstRender)))
@@ -438,8 +444,16 @@ public partial class Select<TValue> : ISelect
     /// </summary>
     public void ClearSearchText() => SearchText = null;
 
-    private void OnClearValue()
+    private async Task OnClearValue()
     {
+        if (ShowSearch)
+        {
+            ClearSearchText();
+        }
+        if (OnClearAsync != null)
+        {
+            await OnClearAsync();
+        }
         CurrentValue = default;
     }
 

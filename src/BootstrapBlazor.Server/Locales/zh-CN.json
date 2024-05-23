@@ -1,4 +1,19 @@
 ﻿{
+  "BootstrapBlazor.Server.Components.Pages.Online": {
+    "SubTitle": "在线人数统计",
+    "ConnectionTime": "连接时间",
+    "LastBeatTime": "最后心跳时间",
+    "Dur": "持续时间",
+    "Ip": "IP地址",
+    "City": "城市",
+    "LocalHost": "本地连接",
+    "OS": "操作系统",
+    "Device": "设备",
+    "Browser": "浏览器",
+    "Language": "语言",
+    "Engine": "引擎",
+    "RequestUrl": "请求URL"
+  },
   "BootstrapBlazor.Server.Components.Pages.Tutorials": {
     "CategoryTitle": "BootstrapBlazor 实战案例",
     "DashboardSummary": "仪表盘 Dashboard",
@@ -68,7 +83,6 @@
     "CommunityLi1": "贡献指南",
     "CommunityLi2": "加入我们",
     "CommunityLi3": "联系方式",
-    "SpecialAcknowledgements": "特别鸣谢",
     "Footer": "码云托管平台"
   },
   "BootstrapBlazor.Server.Components.Samples.Table.TablesDialog": {
@@ -590,7 +604,7 @@
     "NormalTitle": "基础用法",
     "NormalIntro": "通过绑定 <code>TModel</code> 数据模型，自动生成模型各个字段的可编辑表单",
     "NoRenderTitle": "设置绑定模型部分属性不显示",
-    "NoRenderIntro": "通过设置 <code>IEditorItem</code> 实例的 <code>Editable=false</code>, 实现编辑弹窗不可编辑此属性",
+    "NoRenderIntro": "通过设置 <code>IEditorItem</code> 实例的 <code>Ignore=true</code>, 实现编辑弹窗不显示",
     "EditDialogOption": "EditDialogOption 属性",
     "LeftAlignedButton": "编辑弹窗(左对齐)",
     "RightAlignedButton": "编辑弹窗(右对齐)",
@@ -667,6 +681,9 @@
     "TreeViewTreeNodeColorIntro": "通过设置 <code>TreeItem</code> <code>CssClass</code> 来实现自己的节点样式",
     "TreeViewCheckedItemsTitle": "获取所有选中节点",
     "TreeViewCheckedItemsIntro": "通过设置 <code>OnTreeItemChecked</code> 回调委托获取所有节点",
+    "TreeViewCustomCheckedItemsTitle": "自定义选中节点",
+    "TreeViewCustomCheckedItemsIntro": "通过设置节点 <code>CheckedState</code> 控制节点选中状态",
+    "TreeViewCustomCheckedItemsTips1": "通过开启/关闭 <code>AutoCheckChildren</code> 参数来进行节点选中状态控制自动/手动切换",
     "TreeViewShowSkeletonTitle": "加载骨架屏",
     "TreeViewShowSkeletonIntro": "通过设置 <code>ShowSkeleton</code> 使异步加载数据时组件显示骨架屏",
     "TreeViewShowSkeletonButtonText": "异步加载",
@@ -1585,10 +1602,10 @@
     "ClientText": "客户信息服务 Client",
     "DisplayText": "数据显示 Display",
     "EmptyText": "空状态 Empty",
-    "LocatorText": "地理位置定位 IpLocator",
+    "LocatorText": "地理位置定位 IpLocatorFactory ",
     "ImageViewerText": "图片 ImageViewer",
     "IpText": "IP 地址 IpAddress",
-    "PrintText": "打印组件 Print",
+    "PrintText": "打印按钮 Print",
     "TitleText": "网站标题 Title",
     "DownloadText": "文件下载 Download",
     "TransitionText": "过渡效果 Transition",
@@ -3717,9 +3734,11 @@
     "BasicUsageTips": "<code>app.UseBootstrapBlazor</code> 中间件位于程序集 <code>BootstrapBlazor.Middleware</code>，请自行引用此包才能正常使用",
     "BasicUsageP3": "2. 组件中使用注入服务 <code>WebClientService</code> 调用 <code>GetClientInfo</code> 方法",
     "GroupBoxTitle": "您的连接信息",
+    "IpLocatorFactoryDesc": "本服务已内置 IP 地理位置定位功能，详细配置与文档请参考",
     "Id": "连接 ID",
     "RequestUrl": "请求地址",
     "Ip": "IP 地址",
+    "City": "城市",
     "OS": "操作系统",
     "Browser": "浏览器",
     "Engine": "浏览器引擎",
@@ -3989,7 +4008,7 @@
     "LocatorsProviderDesc": "组件库内置两个地理位置定位器分别为 <code>BaiduIpLocatorProvider</code> <code>BaiduIpLocatorProviderV2</code>"
   },
   "BootstrapBlazor.Server.Components.Samples.Print": {
-    "PrintsTitle": "Print 打印组件",
+    "PrintsTitle": "Print 打印按钮",
     "PrintsSubTitle": "用于打印文档或者局部视图",
     "PrintsTips1": "设置 <code style='margin-left: 14px;'>PreviewUrl</code> 时，单开一个新网页进行打印预览，点击此页面的打印按钮进行网页打印",
     "PrintsTips2": "不设置 <code>PreviewUrl</code> 时，如果是 <code>Dialog</code> 组件中的打印按钮，则打印弹窗内容",
@@ -4001,7 +4020,7 @@
     "PrintDialogIntro": "通过设置弹窗组件 <code>ShowPrint</code> 开启打印功能",
     "PrintDialogP": "本例中弹窗内容为自定义组件 <code>{0}</code> 弹窗自身按钮所在 <code>Footer</code> 被隐藏，所以弹窗内置的 <code>Print</code> 按钮无法显示，设置 <code>@nameof(DialogOption.ShowPrintButtonInHeader)</code> 使 <b>打印</b> 按钮显示在标题栏中",
     "PrintServiceTitle": "打印服务",
-    "PrintServiceIntro": "通过设置要打印的内容组件，直接调用 <b>打印服务</b> 进行打印作业",
+    "PrintServiceIntro": "通过设置要打印的内容组件，直接调用 <b>打印服务</b> 进行打印作业，打印服务 <code>DialogService</code> 服务文档 <a href=\"print-service\" target=\"_blank\">[传送门]</a>",
     "PrintsDialogTitle": "数据查询窗口"
   },
   "BootstrapBlazor.Server.Components.Samples.Tags": {
@@ -4504,17 +4523,17 @@
     "LinkButton": "链接按钮 LinkButton",
     "ListView": "列表组件 ListView",
     "ListGroup": "列表框 ListGroup",
-    "Locator": "位置定位 IpLocator",
+    "Locator": "位置定位 IpLocatorFactory",
     "ImageViewer": "图片 ImageViewer",
     "FileIcon": "文件图标 FileIcon",
     "Popover": "弹出窗 Popover",
-    "Print": "打印组件 Print",
+    "Print": "打印按钮 Print",
     "QRCode": "二维码 QRCode",
     "Repeater": "重复组件 Repeater",
     "Search": "搜索框 Search",
     "Tag": "标签 Tag",
     "Timeline": "时间线 Timeline",
-    "Title": "网站标题 Title",
+    "Title": "网站标题 TitleService",
     "Download": "文件下载 Download",
     "Tooltip": "工具条 Tooltip",
     "Reconnector": "重连组件 Reconnector",
@@ -4568,8 +4587,8 @@
     "ChartDoughnut": "圆环图 Doughnut",
     "ChartBubble": "气泡图 Bubble",
     "Transition": "过渡效果 Transition",
-    "Geolocation": "地理定位组件 Geolocation",
-    "Notification": "浏览器通知 Notification",
+    "Geolocation": "地理定位组件 GeoLocationService",
+    "Notification": "浏览器通知 NotificationService",
     "SignaturePad": "手写签名 SignaturePad",
     "Speech": "语音识别 Speech",
     "SpeechComponents": "语音组件",
@@ -4632,7 +4651,10 @@
     "Holiday": "假日服务 ICalendarHoliday",
     "Festival": "节日服务 ICalendarFestival",
     "Lookup": "外键数据源服务 ILookupService",
-    "DialogService": "弹窗服务 DialogService"
+    "DialogService": "弹窗服务 DialogService",
+    "OnlineText": "在线统计 Online",
+    "PrintService": "打印服务 PrintService",
+    "ConnectionService": "在线连接服务 ConnectionService"
   },
   "BootstrapBlazor.Server.Components.Samples.Table.TablesHeader": {
     "TablesHeaderTitle": "表头分组功能",
@@ -4915,14 +4937,19 @@
     "AdvanceIntro": "通过显示模板 <code>Template</code> 对各列进行自定义渲染",
     "CustomColText1": "自定义列名1",
     "CustomColText2": "自定义列名2",
-    "CustomColText3": "自定义列名3"
+    "CustomColText3": "自定义列名3",
+    "ColumnIgnoreTitle": "列忽略",
+    "ColumnIgnoreIntro": "通过设置 <code>Ignore</code> 参数控制列是否渲染，此参数与 <code>Visible</code> 不同，设置 <code>Visible=\"false\"</code> 后不显示列可通过 <code>ShowColumnList=\"true\"</code> 在列表中勾选并显示",
+    "ColumnIgnoreButtonText": "忽略/不忽略",
+    "ColumnOrderTitle": "列顺序",
+    "ColumnOrderIntro": "通过设置 <code>TableColumn</code> 的 <code>Order</code> 参数进行设置顺序"
   },
   "BootstrapBlazor.Server.Components.Samples.Table.TablesColumnDrag": {
     "TablesColumnTitle": "Table 表格",
     "TablesColumnDescription": "用于展示多条结构类似的数据，可对数据进行排序、筛选、对比或其他自定义操作。",
     "AllowDragOrderTitle": "允许拖动列标题调整表格列顺序",
     "AllowDragOrderIntro": "通过指定 <code>AllowDragColumn</code> 设置表格列允许拖动列标题调整表格列顺序",
-    "AllowDragOrderDesc": "在列标题上按下鼠标拖动到其他列标题位置可将该列调整至目标列之前，但 <code>Table</code> 组件内置的列如明细行列、行号列、选择列、操作列等不可被调整"
+    "AllowDragOrderDesc": "<p>在列标题上按下鼠标拖动到其他列标题位置可将该列调整至目标列之前，但 <code>Table</code> 组件内置的列如明细行列、行号列、选择列、操作列等不可被调整</p><p>本示例通过设置 <code>ClientTableName</code> 参数开启了本地化存储，拖动调整顺序后，可刷新页面，列顺序是保持上次状态的</p><p>通过设置 <code>ColumnOrderCallback</code> 回调方法可以实现服务器端列顺序持久化</p>"
   },
   "BootstrapBlazor.Server.Components.Samples.Table.TablesColumnResizing": {
     "TablesColumnTitle": "Table 表格",
@@ -5005,7 +5032,7 @@
     "TablesEditOnAddAsyncDescription": "通过设置 <code>TItem</code> 泛型约束的类实例 <code>Foo</code> 属性的 <code>[Required]</code> 等验证标签即可实现客户端验证",
     "TablesEditOnAddAsyncTips1": "数据绑定类型为可为空类型时自动允许为空，如日期绑定列为 <code>DateTime?</code> 类型",
     "TablesEditOnAddAsyncTips2": "数据绑定类型为数值类型时如，如数量绑定列为 <code>int</code> 类型，自动进行数值验证",
-    "TablesEditOnAddAsyncTips3": "表格呈现的有些数据列是计算得到的结果，此种类型的列是无法参与编辑的，通过设置 <code>Editable=false</code> 自动生成编辑 UI 时就不会生成此列编辑组件，如本示例中 <code>Count</code> 列在编辑弹窗中是不出现的",
+    "TablesEditOnAddAsyncTips3": "表格呈现的有些数据列是计算得到的结果，此种类型的列是无法参与编辑的，通过设置 <code>Ignore=true</code> 自动生成编辑 UI 时就不会生成此列编辑组件，如本示例中 <code>Count</code> 列在编辑弹窗中是不出现的",
     "TablesEditOnAddAsyncTips4": "通过设置 <code>Readonly=true</code> 自动生成编辑 UI 会将此字段进行只读处理，新建时请对 <code>Model</code> 进行默认值赋值",
     "TablesEditOnAddAsyncTips5": "通过设置 <code>IsExtendButtonsInRowHeader=true</code> 使扩展按钮在行前面显示",
     "TablesEditOnAddAsyncTips6": "通过设置 <code>EditDialogDraggable='true'</code> 使编辑弹出框可拖拽",
@@ -6136,8 +6163,8 @@
   },
   "BootstrapBlazor.Server.Components.Samples.Clipboards": {
     "ClipboardTitle": "ClipboardService",
-    "ClipboardIntro": "剪切板服务！请注意，只能在HTTPS安全连接下运行，或者在本地 localhost 开发环境中使用",
-    "ClipboardMessage": "文本内容：{0},已复制到剪切板"
+    "ClipboardIntro": "剪切板服务！请注意，只能在 <code>HTTPS</code> 安全连接下运行，或者在本地 <code>localhost</code> 开发环境中使用",
+    "ClipboardMessage": "文本内容：{0}, 已复制到剪切板"
   },
   "BootstrapBlazor.Server.Components.Samples.Gantts": {
     "Title": "一个简单、交互式、现代的 Web 甘特图库，具有拖动、调整大小、依赖关系和时间刻度",
@@ -6293,6 +6320,15 @@
     "CountText": "计时器",
     "CountIntro": "通过设置 <code>ViewMode=\"FlipClockViewMode.Count\"</code> 开启计时功能，开始时间使用 <code>StartValue</code> 设置",
     "IsCountDownText": "倒计时",
-    "IsCountDownIntro": "通过设置 <code>ViewMode=\"FlipClockViewMode.CountDown\"</code> 用于倒计时功能，开始时间使用 <code>StartValue</code> 设置，倒计时结束时触发 <code>OnCompletedAsync</code> 回调方法"
+    "IsCountDownIntro": "通过设置 <code>ViewMode=\"FlipClockViewMode.CountDown\"</code> 用于倒计时功能，开始时间使用 <code>StartValue</code> 设置，倒计时结束时触发 <code>OnCompletedAsync</code> 回调方法",
+    "CustomText": "自定义参数",
+    "CustomIntro": "通过设置参数自定义显示内容",
+    "Custom": "参数设置",
+    "Height": "高度",
+    "FontSize": "字体大小",
+    "CardHeight": "卡片高度",
+    "CardWidth": "卡片宽度",
+    "CardMargin": "卡片边距",
+    "CardGroupMargin": "卡片组边距"
   }
 }

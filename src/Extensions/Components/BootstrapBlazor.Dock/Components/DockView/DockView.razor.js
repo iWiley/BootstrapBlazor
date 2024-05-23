@@ -58,7 +58,7 @@ export async function init(id, option, invoke) {
     }
 
     // lock stack
-    const components = getAllContentItems(option.content)
+    const components = getAllItemsByType('component', option)
     layout.getAllContentItems().filter(i => i.isComponent).forEach(com => {
         const component = components.find(c => c.id === com.id)
         if (component && component.componentState.lock) {
@@ -111,7 +111,7 @@ export function reset(id, option) {
         removeConfig(option);
 
         const el = dock.el;
-        const components = getAllContentItems(option.content);
+        const components = getAllItemsByType('component', option);
         components.forEach(i => {
             const item = document.getElementById(i.id);
             if (item) {
@@ -213,8 +213,9 @@ const unLockTab = (tab, eventsData) => {
 }
 
 const toggleComponent = (dock, option) => {
-    const items = getAllContentItems(option.content)
+    const items = getAllItemsByType('component', option);
     const comps = dock.layout.getAllContentItems().filter(s => s.isComponent);
+    const stacks = dock.layout.getAllContentItems().filter(s => s.isStack);
 
     // gt 没有 items 有时添加
     items.forEach(v => {
@@ -234,7 +235,13 @@ const toggleComponent = (dock, option) => {
                 rowOrColumn.updateSize()
             }
             else {
-                dock.layout.root.contentItems[0].addItem(v)
+                const stack = stacks.find(s => s.id == v.parent.id) || stacks.pop();
+                if (stack) {
+                    stack.addItem(v);
+                }
+                else {
+                    dock.layout.root.contentItems[0].addItem(v);
+                }
             }
 
             if (v.componentState.lock) {
@@ -259,16 +266,17 @@ const toggleComponent = (dock, option) => {
     saveConfig(option, dock.layout)
 }
 
-const getAllContentItems = content => {
+const getAllItemsByType = (type, parent) => {
     const items = []
 
-    content.forEach(v => {
-        if (v.type === 'component') {
+    parent.content.forEach(v => {
+        if (v.type === type) {
+            v.parent = parent;
             items.push(v)
         }
 
         if (v.content != null) {
-            items.push.apply(items, getAllContentItems(v.content))
+            items.push.apply(items, getAllItemsByType(type, v))
         }
     })
     return items
@@ -278,7 +286,7 @@ const createGoldenLayout = (option, el) => {
     const config = getConfig(option)
 
     if (option.lock) {
-        getAllContentItems(option.content).forEach(i => {
+        getAllItemsByType('component', option).forEach(i => {
             i.componentState.lock = option.lock
         })
     }
@@ -382,17 +390,16 @@ const removeConfig = option => {
 
 const resetComponentId = (config, option) => {
     // 本地配置
-    const components = getAllContentItems(config.root.content)
+    const localComponents = getAllItemsByType('component', config.root)
     // 服务器端配置
-    const items = getAllContentItems(option.content)
-    components.forEach(com => {
-        const item = items.find(i => i.key === com.componentState.key)
+    const serverItems = getAllItemsByType('component', option)
+    localComponents.forEach(com => {
+        const item = serverItems.find(i => i.componentState.key === com.componentState.key)
         if (item) {
-            const lock = com.componentState.lock || item.componentState.lock
-            com.componentState = item.componentState
-            com.title = item.title
             com.id = item.id
-            com.componentState.lock = lock
+            com.title = item.title
+            com.componentState = item.componentState
+            com.componentState.lock = com.componentState.lock || item.componentState.lock
         }
         else {
             // 本地存储中有，配置中没有，需要显示这个组件，通过 key 来定位新 Component
@@ -401,6 +408,7 @@ const resetComponentId = (config, option) => {
                 com.id = newEl.getAttribute('id')
                 com.title = newEl.getAttribute('data-bb-title')
                 com.componentState.id = com.id
+
                 option.invokeVisibleChangedCallback(com.title, true)
             }
             else {
@@ -417,11 +425,56 @@ const resetComponentId = (config, option) => {
         }
     })
 
-    items.forEach(item => {
+    serverItems.forEach(item => {
         // 更新服务器端组件可见状态
-        const com = components.find(i => i.componentState.key === item.key)
-        option.invokeVisibleChangedCallback(item.title, com !== undefined)
+        const com = localComponents.find(i => i.componentState.key === item.componentState.key)
+        option.invokeVisibleChangedCallback(item.title, com !== void 0)
+
+        // 本地存储中没有，配置中有
+        if (com === void 0) {
+            if (config.root.content.length > 0) {
+                config.root.content.push({
+                    type: 'stack',
+                    content: [{
+                        type: 'component',
+                        content: [],
+                        title: item.title,
+                        id: item.id,
+                        componentType: 'component',
+                        componentState: item.componentState
+                    }]
+                });
+            }
+        }
     })
+
+    // set stack headers
+    // 本地配置
+    const localStacks = getAllItemsByType('stack', config.root)
+    // 服务器端配置
+    const serverStacks = getAllItemsByType('stack', option)
+
+    localStacks.forEach(s => {
+        const stack = {
+            hasHeaders: true,
+            ...findStack(s, serverStacks),
+        };
+        s.header = {
+            ...s.header,
+            show: stack.hasHeaders
+        }
+    });
+}
+
+const findStack = (stack, stacks) => {
+    let find = null;
+    for (let com of stack.content) {
+        find = stacks.find(s => s.content.find(c => c.componentState.key === com.componentState.key));
+        if (find) {
+            break;
+        }
+    }
+    return find;
 }
 
 const removeContent = (content, item) => {

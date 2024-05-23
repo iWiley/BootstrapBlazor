@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <PackageReference Include="bunit" Version="1.27.17" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.3" />
+    <PackageReference Include="bunit" Version="1.28.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.4" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
-    <PackageReference Include="xunit" Version="2.7.0" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.7">
+    <PackageReference Include="xunit" Version="2.7.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -28,12 +28,20 @@
   <ItemGroup>
     <Compile Include="..\..\src\BootstrapBlazor.Server\Data\Foo.cs" Link="Misc\Foo.cs" />
     <Compile Include="..\..\src\BootstrapBlazor.Server\Data\TreeFoo.cs" Link="Misc\TreeFoo.cs" />
+    <Compile Include="..\..\src\BootstrapBlazor.Server\Extensions\IpExtensions.cs" Link="Extensions\IpExtensions.cs" />
     <Compile Include="..\..\src\BootstrapBlazor\Components\Table\InternalTableColumn.cs" Link="Misc\InternalTableColumn.cs" />
     <Compile Include="..\..\src\BootstrapBlazor\Extensions\DateTimeExtensions.cs" Link="Extensions\DateTimeExtensions.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\BootstrapBlazor\BootstrapBlazor.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Plugins\Test.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Remove="Plugins\Test.dll" />
   </ItemGroup>
 
   <ItemGroup>

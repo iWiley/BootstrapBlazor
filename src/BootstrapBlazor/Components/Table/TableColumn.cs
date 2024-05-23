@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Components.Forms;
 using System.Linq.Expressions;
 
 namespace BootstrapBlazor.Components;
+
 #if NET5_0
 /// <summary>
 /// 表头组件
@@ -142,9 +143,16 @@ public class TableColumn<TItem, TType> : BootstrapComponentBase, ITableColumn
     public bool Searchable { get; set; }
 
     /// <summary>
-    /// 获得/设置 当前列是否可编辑 默认为 true 当设置为 false 时自动生成编辑 UI 不生成此列
+    /// <inheritdoc/>
     /// </summary>
     [Parameter]
+    public bool Ignore { get; set; }
+
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
+    [Parameter]
+    [ExcludeFromCodeCoverage]
     public bool Editable { get; set; } = true;
 
     /// <summary>
@@ -429,33 +437,6 @@ public class TableColumn<TItem, TType> : BootstrapComponentBase, ITableColumn
     public List<IValidator>? ValidateRules { get; set; }
 
     /// <summary>
-    /// 获得/设置 Table 实例
-    /// </summary>
-    [CascadingParameter]
-    protected IColumnCollection? Columns { get; set; }
-
-    /// <summary>
-    /// 组件初始化方法
-    /// </summary>
-    protected override void OnInitialized()
-    {
-        Columns?.Columns.Add(this);
-        if (FieldExpression != null)
-        {
-            _fieldIdentifier = FieldIdentifier.Create(FieldExpression);
-        }
-
-        // 获取模型属性定义类型
-        PropertyType = typeof(TType);
-    }
-
-    private FieldIdentifier? _fieldIdentifier;
-    /// <summary>
-    /// 获取绑定字段显示名称方法
-    /// </summary>
-    public virtual string GetDisplayName() => Text ?? _fieldIdentifier?.GetDisplayName() ?? FieldName ?? "";
-
-    /// <summary>
     /// 获得/设置 绑定类字段名称
     /// </summary>
     [Parameter]
@@ -472,6 +453,35 @@ public class TableColumn<TItem, TType> : BootstrapComponentBase, ITableColumn
     /// </summary>
     [Parameter]
     public int GroupOrder { get; set; }
+
+    /// <summary>
+    /// 获得/设置 Table 实例
+    /// </summary>
+    [CascadingParameter]
+    protected IColumnCollection? Columns { get; set; }
+
+    /// <summary>
+    /// 组件初始化方法
+    /// </summary>
+    protected override void OnInitialized()
+    {
+        Columns?.Columns.Add(this);
+
+        if (FieldExpression != null)
+        {
+            _fieldIdentifier = FieldIdentifier.Create(FieldExpression);
+        }
+
+        // 获取模型属性定义类型
+        PropertyType = typeof(TType);
+    }
+
+    private FieldIdentifier? _fieldIdentifier;
+
+    /// <summary>
+    /// 获取绑定字段显示名称方法
+    /// </summary>
+    public virtual string GetDisplayName() => Text ?? _fieldIdentifier?.GetDisplayName() ?? FieldName ?? "";
 
     /// <summary>
     /// 获取绑定字段信息方法
