@@ -57,7 +57,7 @@ public partial class CodeEditor
     [Parameter]
     public bool IsReadonly { get; set; }
 
-    private string? ClassString => CssBuilder.Default("code-edtior")
+    private string? ClassString => CssBuilder.Default("code-editor")
         .AddClassFromAttributes(AdditionalAttributes)
         .Build();
 

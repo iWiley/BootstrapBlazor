@@ -102,27 +102,27 @@ public static class BootstrapBlazorServiceCollectionExtensions
         {
             configureOptions?.Invoke(op);
 
-            // 设置默认文化信息
-            if (op.DefaultCultureInfo != null)
-            {
-                var culture = new CultureInfo(op.DefaultCultureInfo);
-                CultureInfo.DefaultThreadCurrentCulture = culture;
-                CultureInfo.DefaultThreadCurrentUICulture = culture;
-            }
+            //// 设置默认文化信息
+            //if (op.DefaultCultureInfo != null)
+            //{
+            //    var culture = new CultureInfo(op.DefaultCultureInfo);
+            //    CultureInfo.DefaultThreadCurrentCulture = culture;
+            //    CultureInfo.DefaultThreadCurrentUICulture = culture;
+            //}
 
-            // 设置 FallbackCulture
-            SetFallbackCulture();
+            //// 设置 FallbackCulture
+            //SetFallbackCulture();
 
-            [ExcludeFromCodeCoverage]
-            void SetFallbackCulture()
-            {
-                if (string.IsNullOrEmpty(CultureInfo.CurrentUICulture.Name))
-                {
-                    var culture = new CultureInfo(op.FallbackCulture);
-                    CultureInfo.CurrentCulture = culture;
-                    CultureInfo.CurrentUICulture = culture;
-                }
-            }
+            //[ExcludeFromCodeCoverage]
+            //void SetFallbackCulture()
+            //{
+            //    if (string.IsNullOrEmpty(CultureInfo.CurrentUICulture.Name))
+            //    {
+            //        var culture = new CultureInfo(op.FallbackCulture);
+            //        CultureInfo.CurrentCulture = culture;
+            //        CultureInfo.CurrentUICulture = culture;
+            //    }
+            //}
         });
         return services;
     }
