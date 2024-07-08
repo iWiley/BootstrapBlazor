@@ -2,6 +2,8 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 // Website: https://www.blazor.zone or https://argozhang.github.io/
 
+using Microsoft.AspNetCore.Components.Web.Virtualization;
+
 namespace BootstrapBlazor.Components;
 
 /// <summary>
@@ -9,6 +11,11 @@ namespace BootstrapBlazor.Components;
 /// </summary>
 public partial class ListView<TItem> : BootstrapComponentBase
 {
+    /// <summary>
+    /// 获得/设置 内置虚拟化组件实例
+    /// </summary>
+    protected Virtualize<TItem>? VirtualizeElement { get; set; }
+
     private string? ClassString => CssBuilder.Default("listview")
         .AddClass("is-vertical", IsVertical)
         .AddClassFromAttributes(AdditionalAttributes)

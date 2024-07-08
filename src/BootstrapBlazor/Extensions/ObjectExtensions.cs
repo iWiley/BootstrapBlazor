@@ -191,12 +191,12 @@ public static class ObjectExtensions
     /// </summary>
     /// <param name="fileSize"></param>
     /// <returns></returns>
-    public static string ToFileSizeString(this long fileSize) => fileSize switch
+    public static string ToFileSizeString(this long fileSize, string format = "0", bool isShowB = true) => fileSize switch
     {
-        >= 1024 and < 1024 * 1024 => $"{Math.Round(fileSize / 1024D, 0, MidpointRounding.AwayFromZero)} KB",
-        >= 1024 * 1024 and < 1024 * 1024 * 1024 => $"{Math.Round(fileSize / 1024 / 1024D, 0, MidpointRounding.AwayFromZero)} MB",
-        >= 1024 * 1024 * 1024 => $"{Math.Round(fileSize / 1024 / 1024 / 1024D, 0, MidpointRounding.AwayFromZero)} GB",
-        _ => $"{fileSize} B"
+        >= 1024 and < 1024 * 1024 => $"{Math.Round(fileSize / 1024D, 0, MidpointRounding.AwayFromZero).ToString(format)} K{(isShowB ? "B" : "")}",
+        >= 1024 * 1024 and < 1024 * 1024 * 1024 => $"{Math.Round(fileSize / 1024 / 1024D, 0, MidpointRounding.AwayFromZero).ToString(format)} M{(isShowB ? "B" : "")}",
+        >= 1024 * 1024 * 1024 => $"{Math.Round(fileSize / 1024 / 1024 / 1024D, 0, MidpointRounding.AwayFromZero).ToString(format)} G{(isShowB ? "B" : "")}",
+        _ => $"{fileSize.ToString(format)} B"
     };
 
     internal static void Clone<TModel>(this TModel source, TModel item)

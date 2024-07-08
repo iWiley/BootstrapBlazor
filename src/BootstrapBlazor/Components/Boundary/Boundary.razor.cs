@@ -7,7 +7,7 @@ namespace BootstrapBlazor.Components;
 /// <summary>
 /// Divider 组件
 /// </summary>
-public partial class Divider
+public partial class Boundary
 {
     /// <summary>
     /// 获得 class 样式集合

@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 // Website: https://www.blazor.zone or https://argozhang.github.io/
 
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.Extensions.Localization;
 
 namespace BootstrapBlazor.Components;
@@ -11,6 +12,9 @@ namespace BootstrapBlazor.Components;
 /// </summary>
 public partial class ButtonUpload<TValue>
 {
+    [NotNull]
+    public InputFile? InputFile { get; private set; }
+
     private bool IsUploadButtonDisabled => IsDisabled || (IsSingle && UploadFiles.Any());
 
     private string? BrowserButtonClassString => CssBuilder.Default("btn-browser")

@@ -9,6 +9,9 @@ namespace BootstrapBlazor.Components;
 /// </summary>
 public partial class Card
 {
+    [NotNull]
+    public ElementReference? Element { get; set; }
+
     /// <summary>
     /// Card 组件样式
     /// </summary>

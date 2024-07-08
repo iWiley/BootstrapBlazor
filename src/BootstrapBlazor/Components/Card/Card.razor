@@ -2,7 +2,7 @@
 @inherits BootstrapModuleComponentBase
 @attribute [BootstrapModuleAutoLoader(JSObjectReference = true)]
 
-<div @attributes="@AdditionalAttributes" class="@ClassString" id="@Id">
+<div @ref="Element" @attributes="@AdditionalAttributes" class="@ClassString" id="@Id">
     @if (HeaderTemplate != null || !string.IsNullOrEmpty(HeaderText))
     {
         <div class="card-header">
